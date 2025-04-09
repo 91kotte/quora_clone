@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/error_messages.html' %}
+
+<!-- Post Question Form -->
+{% if user.is_authenticated %}
+<div class="card p-3 mb-4 shadow-sm">
+  <h5 class="mb-3">Ask a Question</h5>
+  <form method="POST" action="{% url 'post_question' %}">
+    {% csrf_token %}
+    <input type="text" name="title" class="form-control mb-2" placeholder="Enter your question" required>
+    <textarea name="description" class="form-control mb-2" rows="3" placeholder="Describe your question..."></textarea>
+    <button type="submit" class="btn btn-primary">Post Question</button>
+  </form>
+</div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+{% include 'core/error_messages.html' %}
+
+<div class="container mt-4">
+  <div class="card p-3 shadow-sm">
+    <div class="d-flex justify-content-between">
+      <div>
+        <h5>{{ question.title }}</h5>
+        <small class="text-muted">
+          Asked by 
+          {% if request.user == question.user %}
+            <strong>You</strong>
+          {% else %}
+            {{ question.user.username }}
+          {% endif %}
+          · {{ question.created_at|timesince }} ago
+        </small>
+      </div>
+      <div class="d-flex gap-2">
+        <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary">← Back</a>
+        <!-- Edit Question Button -->
+        {% if request.user == question.user %}
+          <a href="{% url 'edit_question' question.pk %}" class="btn btn-sm btn-outline-warning">✏️ Edit Question</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="mt-3">
+      <p>{{ question.description }}</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Answer Form Toggle -->
+  <div class="mb-4">
+    <button class="btn btn-link text-decoration-none" onclick="toggleAnswerForm()">➕ Write an Answer</button>
+    <div id="answerForm" style="display: none;">
+      <form method="POST">
+        {% csrf_token %}
+        {{ form.text }}
+        <button type="submit" class="btn btn-sm btn-success mt-2">Post Answer</button>
+      </form>
+    </div>
+  </div>
+
+  <h6>{{ answers.count }} Answer{{ answers.count|pluralize }}</h6>
+
+  {% for answer in answers %}
+    <div class="card p-3 mb-3 shadow-sm">
+      <div class="d-flex justify-content-between">
+        <div>
+          <p>{{ answer.text }}</p>
+          <small class="text-muted">
+            Answered by 
+            {% if request.user == answer.user %}
+              <strong>You</strong>
+            {% else %}
+              {{ answer.user.username }}
+            {% endif %}
+            · {{ answer.created_at|timesince }} ago
+          </small>
+        </div>
+      </div>
+
+
+      <!-- Edit Answer Button -->
+      {% if answer.user == request.user %}
+        <div class="mt-2">
+          <a href="{% url 'edit_answer' answer.pk %}" class="btn btn-sm btn-warning">✏️ Edit</a>
+        </div>
+      {% endif %}
+
+      <div class="mt-2">
+        <form action="{% url 'like_answer' answer.id %}" method="POST">
+          {% csrf_token %}
+          {% if user in answer.likes.all %}
+            <button class="btn btn-sm btn-outline-danger">❤️ Unlike</button>
+          {% else %}
+            <button class="btn btn-sm btn-outline-primary">🤍 Like</button>
+          {% endif %}
+          <span class="ms-2">{{ answer.likes.count }} like{{ answer.likes.count|pluralize }}</span>
+        </form>
+      </div>
+    </div>
+  {% empty %}
+    <p>No answers yet. Be the first to answer!</p>
+  {% endfor %}
+</div>
+
+<script>
+  function toggleAnswerForm() {
+    const form = document.getElementById("answerForm");
+    form.style.display = form.style.display === "none" ? "block" : "none";
+  }
+</script>
+
+{% endblock %}

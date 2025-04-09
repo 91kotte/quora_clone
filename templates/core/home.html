@@ -1,0 +1,105 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/error_messages.html' %}
+
+<div class="container mt-4">
+  <!-- Post Question Form -->
+  {% if user.is_authenticated %}
+    <div class="card p-3 mb-4 shadow-sm">
+      <h5 class="mb-3">Ask a Question</h5>
+      <form method="POST" action="{% url 'post_question' %}">
+        {% csrf_token %}
+        <input type="text" name="title" class="form-control mb-2" placeholder="Enter your question" required>
+        <textarea name="description" class="form-control mb-2" rows="3" placeholder="Describe your question..."></textarea>
+        <button type="submit" class="btn btn-primary">Post Question</button>
+      </form>
+    </div>
+  {% endif %}
+
+  <!-- Search bar -->
+  <form method="GET" class="mb-4">
+    <div class="input-group">
+      <input type="text" name="q" class="form-control" placeholder="Search questions..." value="{{ request.GET.q }}">
+      <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+  </form>
+
+  <!-- Your Questions -->
+  <div class="card shadow-sm p-3 mb-4">
+    <h5 class="mb-3">Your Questions</h5>
+    {% for q in questions %}
+      {% if q.user == request.user %}
+        <div class="mb-3">
+          <strong>{{ q.title }}</strong>
+          <small class="text-muted d-block">Posted by You - {{ q.created_at|timesince }} ago</small>
+          <p class="text-muted">{{ q.description|truncatechars:150 }}</p>
+          <div class="d-flex gap-3 align-items-center">
+            <a href="{% url 'question_detail' q.id %}" class="btn btn-sm btn-outline-primary">💬 View Answer</a>
+            <span>{{ q.answer_set.count }} answer{{ q.answer_set.count|pluralize }}</span>
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-link text-decoration-none p-0" onclick="toggleCommentBox('{{ q.id }}')">Add Comment</button>
+            <div id="commentBox-{{ q.id }}" style="display: none;">
+              <form method="POST" action="{% url 'post_answer_from_home' q.id %}">
+                {% csrf_token %}
+                <textarea class="form-control" name="text" placeholder="Write your answer..." required></textarea>
+                <button class="btn btn-sm btn-success mt-2">Post</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <hr>
+      {% endif %}
+    {% empty %}
+      <p>You haven't asked any questions yet.</p>
+    {% endfor %}
+  </div>
+
+  <!-- Other Users' Questions -->
+  <div class="card shadow-sm p-3">
+    <h5 class="mb-3">Questions from Others</h5>
+    {% for q in questions %}
+      {% if q.user != request.user %}
+        <div class="mb-4">
+          <div class="d-flex justify-content-between align-items-start">
+            <div>
+              <h6 class="mb-0">{{ q.user.username }}</h6>
+              <small class="text-muted">Posted {{ q.created_at|timesince }} ago</small>
+            </div>
+          </div>
+          <div class="mt-2">
+            <strong>{{ q.title }}</strong>
+            <p class="text-muted">{{ q.description|truncatechars:150 }}</p>
+          </div>
+          <div class="d-flex gap-3 align-items-center">
+            <a href="{% url 'question_detail' q.id %}" class="btn btn-sm btn-outline-primary">💬 View Answer</a>
+            <span>{{ q.answer_set.count }} answer{{ q.answer_set.count|pluralize }}</span>
+          </div>
+          <div class="mt-2">
+            <button class="btn btn-link text-decoration-none p-0" onclick="toggleCommentBox('{{ q.id }}')">Add Comment</button>
+            <div id="commentBox-{{ q.id }}" style="display: none;">
+              <form method="POST" action="{% url 'post_answer_from_home' q.id %}">
+                {% csrf_token %}
+                <textarea class="form-control" name="text" placeholder="Write your answer..." required></textarea>
+                <button class="btn btn-sm btn-success mt-2">Post</button>
+              </form>
+            </div>
+          </div>
+        </div>
+        <hr>
+      {% endif %}
+      {% empty %}
+      <p>No questions yet.</p>
+    {% endfor %}
+  </div>
+
+</div>
+
+<script>
+  function toggleCommentBox(id) {
+    let box = document.getElementById('commentBox-' + id);
+    box.style.display = box.style.display === 'none' ? 'block' : 'none';
+  }
+</script>
+
+{% endblock %}

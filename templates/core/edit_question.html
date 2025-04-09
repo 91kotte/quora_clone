@@ -1,0 +1,22 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/error_messages.html' %}
+
+<!-- Edit Question Form -->
+<div class="container mt-4">
+  <div class="card p-4 shadow-sm">
+    <h5>Edit Your Question</h5>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="mb-2">
+        <input type="text" name="title" class="form-control" value="{{ question.title }}" required>
+      </div>
+      <div class="mb-2">
+        <textarea name="description" class="form-control" rows="4">{{ question.description }}</textarea>
+      </div>
+      <button class="btn btn-success">Save Changes</button>
+      <a href="{% url 'question_detail' question.pk %}" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block content %}
+{% include 'core/error_messages.html' %}
+
+<!-- Edit Answer Form -->
+<div class="container mt-4">
+  <div class="card p-4 shadow-sm">
+    <h5>Edit Your Answer</h5>
+    <form method="POST">
+      {% csrf_token %}
+      <textarea name="text" class="form-control" rows="4" required>{{ answer.text }}</textarea>
+      <button class="btn btn-success mt-2">Save Changes</button>
+      <a href="{% url 'question_detail' answer.question.pk %}" class="btn btn-secondary mt-2">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}
