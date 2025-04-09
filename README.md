@@ -22,22 +22,23 @@ A simple web-based Q&A platform (like Quora), built using Django. Users can ask 
 
 ## Setup Instructions ##
 1. Clone the repo
+```bash
 git clone https://github.com/91kotte/quora_clone.git
 cd quora_clone
 
-2. Create a virtual environment and activate it
+3. Create a virtual environment and activate it
 python -m venv env
 source env/bin/activate  # For Linux/macOS
 env\Scripts\activate     # For Windows
 
-3. Install dependencies
+4. Install dependencies
 pip install -r requirements.txt
 
-4. Apply migrations
+5. Apply migrations
 python manage.py migrate
 python manage.py makemigrations
 
-5. Run the development server
+6. Run the development server
 python manage.py runserver
 
 
