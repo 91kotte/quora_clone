@@ -22,24 +22,24 @@ A simple web-based Q&A platform (like Quora), built using Django. Users can ask 
 
 ## Setup Instructions ##
 
-## 1. Clone the repo
+1. Clone the repo
 ```bash
 git clone https://github.com/your-username/django-qna-app.git
 cd django-qna-app
 
-## 2. Create a virtual environment and activate it
+2. Create a virtual environment and activate it
 python -m venv env
 source env/bin/activate  # For Linux/macOS
 env\Scripts\activate     # For Windows
 
-## 3. Install dependencies
+3. Install dependencies
 pip install -r requirements.txt
 
-## 4. Apply migrations
+4. Apply migrations
 python manage.py migrate
 python manage.py makemigrations
 
-## 5. Run the development server
+5. Run the development server
 python manage.py runserver
 
 
